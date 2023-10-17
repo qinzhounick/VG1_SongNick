@@ -10,25 +10,43 @@ namespace Platformer
         Rigidbody2D _rigidbody2D;
         public Transform aimPivot;
         public GameObject projectilePrefab;
+        SpriteRenderer sprite;
+        Animator animator;
 
         public int jumpsLeft;
         // Start is called before the first frame update
         void Start()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
+            sprite = GetComponent<SpriteRenderer>();
+            animator = GetComponent<Animator>();
         }
 
+        void FixedUpdate()
+        {
+            animator.SetFloat("Speed", _rigidbody2D.velocity.magnitude);
+            if(_rigidbody2D.velocity.magnitude > 0 )
+            {
+                animator.speed = _rigidbody2D.velocity.magnitude / 3f;
+            }
+            else
+            {
+                animator.speed = 1f;
+            }
+        }
         // Update is called once per frame
         void Update()
         {
             if(Input.GetKey(KeyCode.A))
             {
                 _rigidbody2D.AddForce(Vector2.left * 18f * Time.deltaTime, ForceMode2D.Impulse);
+                sprite.flipX = true;
             }
 
             if (Input.GetKey(KeyCode.D))
             {
                 _rigidbody2D.AddForce(Vector2.right * 18f * Time.deltaTime, ForceMode2D.Impulse);
+                sprite.flipX = false;
             }
 
             if(Input.GetMouseButtonDown(0))
@@ -46,6 +64,7 @@ namespace Platformer
                     _rigidbody2D.AddForce(Vector2.up * 15f, ForceMode2D.Impulse);
                 }
             }
+            animator.SetInteger("JumpsLeft", jumpsLeft);
 
             Vector3 mousePosition = Input.mousePosition;
             Vector3 mousePositionInWorld = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -62,7 +81,7 @@ namespace Platformer
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
             {
-                RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.7f);
+                RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.85f);
 
                 for(int i = 0;i<hits.Length;i++)
                 {
