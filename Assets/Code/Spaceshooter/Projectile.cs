@@ -17,8 +17,8 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float acceleration = 1f;
-        float maxSpeed = 2f;
+        float acceleration = GameController.instance.missileSpeed / 2f;
+        float maxSpeed = GameController.instance.missileSpeed;
 
         ChooseNearestTarget();
 
@@ -71,6 +71,8 @@ public class Projectile : MonoBehaviour
             );
 
             Destroy( explosion, 0.25f );
+
+            GameController.instance.EarnPoints(10);
         }
     }
 }
