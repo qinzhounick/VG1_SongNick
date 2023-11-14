@@ -1,25 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using TMPro;
 
 namespace Platformer
 {
     public class PlayerController : MonoBehaviour
     {
+        public static PlayerController instance;
+
         Rigidbody2D _rigidbody2D;
         public Transform aimPivot;
         public GameObject projectilePrefab;
         SpriteRenderer sprite;
         Animator animator;
+        public TMP_Text scoreUI;
 
         public int jumpsLeft;
+        public int score;
+        public bool isPaused;
+
+        void Awake()
+        {
+            instance = this;
+        }
         // Start is called before the first frame update
         void Start()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             sprite = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
+
+            score = PlayerPrefs.GetInt("Score");
         }
 
         void FixedUpdate()
@@ -34,9 +46,20 @@ namespace Platformer
                 animator.speed = 1f;
             }
         }
+
+
         // Update is called once per frame
         void Update()
         {
+            scoreUI.text = score.ToString();
+            if(isPaused)
+            {
+                return;
+            }
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                MenuController.instance.Show();
+            }
             if(Input.GetKey(KeyCode.A))
             {
                 _rigidbody2D.AddForce(Vector2.left * 18f * Time.deltaTime, ForceMode2D.Impulse);
@@ -93,6 +116,12 @@ namespace Platformer
                     }
                 }
             }
+        }
+
+        public void ResetScore()
+        {
+            score = 0;
+            PlayerPrefs.DeleteKey("Score");
         }
     }
 
