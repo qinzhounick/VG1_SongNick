@@ -39,7 +39,7 @@ namespace Adventure
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        private void LateUpdate()
+        void LateUpdate()
         {
             for(int i=0; i<sprites.Length; i++)
             {
@@ -88,7 +88,23 @@ namespace Adventure
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 _animator.SetTrigger("attack");
+
+                int facingDirectionIndex = (int)facingDirection;
+                Transform attackZone = attackZones[facingDirectionIndex];
+
+                Collider2D[] hits = Physics2D.OverlapCircleAll(attackZone.position, 0.1f);
+
+                foreach (Collider2D hit in hits)
+                {
+                    Breakable breakableObject = hit.GetComponent<Breakable>();
+                    if (breakableObject)
+                    {
+                        breakableObject.Break();
+                    }
+                }
             }
+
+            
         }
     }
 
