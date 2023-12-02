@@ -6,11 +6,19 @@ using UnityEngine;
 
 namespace Adventure
 {
+    public enum Direction
+    {
+        Up = 0,
+        Down = 1,
+        Left = 2,
+        Right = 3
+    }
+
     public class PlayerController : MonoBehaviour
     {
         Rigidbody2D _rigidbody;
         Animator _animator;
-
+        SpriteRenderer _spriteRenderer;
 
 
 
@@ -19,11 +27,28 @@ namespace Adventure
         public KeyCode keyLeft;
         public KeyCode keyRight;
         public float moveSpeed;
+        public Sprite[] sprites;
+        public Transform[] attackZones;
+
+        public Direction facingDirection;
         // Start is called before the first frame update
         void Start()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _animator = GetComponent<Animator>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        private void LateUpdate()
+        {
+            for(int i=0; i<sprites.Length; i++)
+            {
+                if(_spriteRenderer.sprite == sprites[i])
+                {
+                    facingDirection = (Direction)i;
+                    break;
+                }
+            }    
         }
 
         void FixedUpdate()
